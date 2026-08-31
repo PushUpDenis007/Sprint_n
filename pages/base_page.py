@@ -18,7 +18,7 @@ class BasePage:
 
     @allure.step('Дождать когда элемент станет кликабельным')
     def wait_for_clickable(self,locator):
-        WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(locator))     
+        return WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(locator))     
 
     @allure.step('Дождать когда элемент появится на странице')
     def wait_for_located(self,locator):
@@ -35,6 +35,10 @@ class BasePage:
             return True
         except:
             return False        
+
+    @allure.step('Получить атрибут элемента')
+    def get_attribute(self, locator, attribute):
+        return WebDriverWait(self.driver, 3).until(EC.presence_of_element_located(locator)).get_attribute(attribute)
 
     @allure.step('Дождать когда элемент станет невидимым')
     def wait_for_invisibility(self,locator):

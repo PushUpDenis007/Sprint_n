@@ -1,11 +1,9 @@
 import pytest, allure
 from pages.routes_page import RoutesPage
-#from pages.routes_page import SigninPage
-#from pages.recipes_page import RecipesPage
 from urls import Urls
 from webdriver_factory import WebDriverFactory
-from helpers import create_user_payload
 from locators.routes_page_locators import RoutesPageLocators as Routes
+from data import Adresses as Adr
 
 def pytest_addoption(parser):
     """Регистрируем параметр командной строки для выбора браузера."""
@@ -26,6 +24,11 @@ def driver(request):
     yield driver
     with allure.step('Закрываем сайт'):
         driver.quit()
+
+@pytest.fixture
+def fill_from_to(routes_page):
+    routes_page.fill_from_input(Adr.ADRESS1)
+    routes_page.fill_to_input(Adr.ADRESS2)
 
 @pytest.fixture
 def routes_page(driver):
