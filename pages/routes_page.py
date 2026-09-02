@@ -134,7 +134,7 @@ class RoutesPage(BasePage):
 
     @allure.step('Дождаться такси')
     def is_taxi_found (self,time):
-        return self.wait_for_located(Routes.final_taxi_number, time)
+        return self.wait_for_located(Routes.final_taxi_number, time=time)
 
     @allure.step('Дождаться такси')
     def is_taxi_found_modal_correct (self):
