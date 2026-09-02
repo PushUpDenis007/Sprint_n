@@ -1,6 +1,7 @@
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 import allure
+from selenium.webdriver.common.action_chains import ActionChains
 
 class BasePage:
     
@@ -21,8 +22,8 @@ class BasePage:
         return WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable(locator))     
 
     @allure.step('Дождать когда элемент появится на странице')
-    def wait_for_located(self,locator):
-        return WebDriverWait(self.driver, 10).until(EC.presence_of_element_located(locator))
+    def wait_for_located(self,locator,time=10):
+        return WebDriverWait(self.driver, time).until(EC.presence_of_element_located(locator))
 
     @allure.step('Дождать когда элемент станет видимым')
     def wait_for_visibility(self,locator):
@@ -39,6 +40,12 @@ class BasePage:
     @allure.step('Получить атрибут элемента')
     def get_attribute(self, locator, attribute):
         return WebDriverWait(self.driver, 3).until(EC.presence_of_element_located(locator)).get_attribute(attribute)
+
+    @allure.step('Навести мышку')
+    def hover_on_element (self,locator):
+        element = self.driver.find_element(*locator)
+        action = ActionChains(self.driver).move_to_element(element)
+        return action.perform() 
 
     @allure.step('Дождать когда элемент станет невидимым')
     def wait_for_invisibility(self,locator):

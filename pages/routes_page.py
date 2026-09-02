@@ -2,6 +2,8 @@ from locators.routes_page_locators import RoutesPageLocators as Routes
 from pages.base_page import BasePage
 import allure
 
+
+
 class RoutesPage(BasePage):
 
     @allure.step('Заполнить поле Откуда')
@@ -44,6 +46,11 @@ class RoutesPage(BasePage):
         self.wait_for_clickable(Routes.TYPE_BY_NAME(type))
         self.click_element (Routes.TYPE_BY_NAME(type))
 
+    @allure.step('Изменить тип тариф на {tariff}')
+    def change_tariff (self,tariff):
+        self.wait_for_clickable(Routes.TARIFF_BY_NAME(tariff[0]))
+        self.click_element (Routes.TARIFF_BY_NAME(tariff[0]))
+
     @allure.step('Получить атрибут типа движения {type}')
     def get_type_attribute (self,type):
         return self.get_attribute(Routes.TYPE_BY_NAME(type),'class')
@@ -76,17 +83,12 @@ class RoutesPage(BasePage):
                 is_active += 1
         return is_active == 1
 
-    @allure.step('открыть инфо тарифа')
-    def click_info_tariff_button (self,tariff):
-        self.wait_for_located(Routes.TARIIF_INFO(tariff[0]))
-        return self.click_element(Routes.TARIIF_INFO(tariff[0]))    
-
     @allure.step('Проверить описание в окне инфо')
     def check_info_description (self,tariff):
         self.wait_for_located(Routes.TARIFF_BY_NAME(tariff[0]))
         self.click_element(Routes.TARIFF_BY_NAME(tariff[0]))
         self.wait_for_located(Routes.TARIIF_INFO(tariff[0]))
-        self.click_element(Routes.TARIIF_INFO(tariff[0]))
+        self.hover_on_element(Routes.TARIIF_INFO(tariff[0]))
         self.wait_for_located(Routes.TARIIF_DESCRIPTION(tariff[0]))
         return self.get_text(Routes.TARIIF_DESCRIPTION(tariff[0])) == tariff[1]
 
@@ -109,4 +111,68 @@ class RoutesPage(BasePage):
     @allure.step('Проверить что Кнопка финального заказа оторбажается')
     def is_submit_button_visible (self):
         return self.wait_for_visibility (Routes.submit_button)  
+
+    @allure.step('Активировать чекбокс Столик для ноутбука')
+    def click_checkbox_notebook_table (self):
+        self.wait_for_located(Routes.req_button)
+        self.click_element(Routes.req_button)
+        self.wait_for_located (Routes.notbook_table_switch)
+        return self.click_element (Routes.notbook_table_switch)  
+
+    @allure.step('Нажимаем кнопку Ввести номер и заказать')
+    def click_submit_button (self):
+        self.wait_for_located (Routes.submit_button)
+        return self.click_element (Routes.submit_button)   
+
+    @allure.step('Проверить что окно ожиания такси корректно')
+    def is_search_taxi_modal_correct (self):
+        self.wait_for_located(Routes.search_taxi_header)
+        self.wait_for_located(Routes.search_taxi_timer)
+        self.wait_for_located(Routes.search_taxi_cancel_button)
+        self.wait_for_located(Routes.search_taxi_details_button)
+        return True
+
+    @allure.step('Дождаться такси')
+    def is_taxi_found (self,time):
+        return self.wait_for_located(Routes.final_taxi_number, time)
+
+    @allure.step('Дождаться такси')
+    def is_taxi_found_modal_correct (self):
+        self.wait_for_located(Routes.final_taxi_time)
+        self.wait_for_located(Routes.final_taxi_number)
+        self.wait_for_located(Routes.final_taxi_image)
+        self.wait_for_located(Routes.final_taxi_driver_name)
+        self.wait_for_located(Routes.final_taxi_driver_photo)
+        self.wait_for_located(Routes.final_taxi_driver_raiting)
+        self.wait_for_located(Routes.search_taxi_details_button)
+        self.wait_for_located(Routes.search_taxi_cancel_button)
+        return True
+
+    @allure.step('Проверить что картинка авто в заказе совпадает с картинкой тарифа')
+    def is_img_tarrif_correct (self,tariff):
+        self.wait_for_located(Routes.final_taxi_image)
+        return tariff[2] in self.get_attribute(Routes.final_taxi_image,"src")
+
+    @allure.step('Нажимаем кнопку Детали')
+    def click_order_details_button (self):
+        self.wait_for_located (Routes.search_taxi_details_button)
+        return self.click_element (Routes.search_taxi_details_button)   
+
+    @allure.step('Узнать стоимость тарифа')
+    def get_tariff_price (self,tariff):
+        self.wait_for_located (Routes.TARIFF_PRICE(tariff[0]))
+        return self.get_text(Routes.TARIFF_PRICE(tariff[0])).replace("₽", "").strip()
+
+    @allure.step('Узнать стоимость тарифа')
+    def get_order_cost (self):
+        self.wait_for_located (Routes.search_taxi_price_label)
+        return self.get_text(Routes.search_taxi_price_label).split("-")[1].replace("₽", "").strip()
     
+    @allure.step('Нажимаем кнопку Отмена')
+    def click_order_cancel_button (self):
+        self.wait_for_located (Routes.search_taxi_cancel_button)
+        return self.click_element (Routes.search_taxi_cancel_button)   
+
+    @allure.step('Проверить оствутвие модалки заказа')
+    def is_order_modal_visible (self):
+        return self.wait_for_invisibility(Routes.search_taxi_modal)
